@@ -12,8 +12,11 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import pageobject.MainPage;
 import pageobject.OrderPage;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class OrderFormAnalysisTest {
+    private static final Logger logger = LogManager.getLogger(OrderFormAnalysisTest.class);
     private WebDriver driver;
 
     @BeforeEach
@@ -39,43 +42,24 @@ public class OrderFormAnalysisTest {
 
     @Test
     void analyzeOrderFormAfterDateSelection() {
-        System.out.println("=== АНАЛИЗ ФОРМЫ ЗАКАЗА ПОСЛЕ ВЫБОРА ДАТЫ ===");
-        
-        // Кликаем по кнопке заказа
+        logger.info("=== АНАЛИЗ ФОРМЫ ЗАКАЗА ПОСЛЕ ВЫБОРА ДАТЫ ===");
         MainPage mainPage = new MainPage(driver);
         assertTrue(mainPage.clickOrderButton(0), "Кнопка 'Заказать' не была нажата успешно");
-        
-        // Заполняем первую страницу
         fillFirstPage();
-        
-        // Переходим на вторую страницу
-        driver.findElement(By.xpath("//button[text()='Далее']")).click();
-        
-        System.out.println("\n--- АНАЛИЗ ВТОРОЙ СТРАНИЦЫ ФОРМЫ ---");
-        
-        // Анализируем поля второй страницы
-        analyzeSecondPageFields();
-        
-        // Выбираем дату
-        selectDate();
-        
-        // Анализируем что доступно после выбора даты
-        analyzeAfterDateSelection();
-        
-        // Заполняем остальные поля
-        fillRemainingFields();
-        
-        // Анализируем кнопку заказа
-        analyzeOrderButton();
-        
-        // Нажимаем кнопку "Заказать" на второй странице
-        System.out.println("\n--- НАЖАТИЕ КНОПКИ ЗАКАЗА НА ВТОРОЙ СТРАНИЦЕ ---");
         OrderPage orderPage = new OrderPage(driver);
+        orderPage.clickNextButton();
+        logger.info("\n--- АНАЛИЗ ВТОРОЙ СТРАНИЦЫ ФОРМЫ ---");
+        orderPage.analyzeSecondPageFields();
+        orderPage.selectDate();
+        orderPage.analyzeAfterDateSelection();
+        orderPage.fillRemainingFields();
+        orderPage.analyzeOrderButton();
+        logger.info("\n--- НАЖАТИЕ КНОПКИ ЗАКАЗА НА ВТОРОЙ СТРАНИЦЕ ---");
         assertTrue(orderPage.clickOrderButton(), "Кнопка 'Заказать' на второй странице не была нажата успешно");
     }
 
     private void fillFirstPage() {
-        System.out.println("Заполняем первую страницу...");
+        logger.info("Заполняем первую страницу...");
         
         driver.findElement(By.xpath("//input[@placeholder='* Имя']")).sendKeys("Тест");
         driver.findElement(By.xpath("//input[@placeholder='* Фамилия']")).sendKeys("Тестов");
@@ -91,31 +75,31 @@ public class OrderFormAnalysisTest {
     }
 
     private void analyzeSecondPageFields() {
-        System.out.println("Анализируем поля второй страницы:");
+        logger.info("Анализируем поля второй страницы:");
         
         // Поле даты
         List<WebElement> dateInputs = driver.findElements(By.xpath("//input[contains(@placeholder, 'Когда привезти')]"));
-        System.out.println("  Поле даты: " + (dateInputs.size() > 0 ? "найдено" : "не найдено"));
+        logger.info("  Поле даты: {}", dateInputs.size() > 0 ? "найдено" : "не найдено");
         
         // Выпадающий список срока аренды
         List<WebElement> rentalDropdowns = driver.findElements(By.xpath("//div[contains(@class, 'Dropdown-control')]"));
-        System.out.println("  Выпадающий список аренды: " + (rentalDropdowns.size() > 0 ? "найден" : "не найден"));
+        logger.info("  Выпадающий список аренды: {}", rentalDropdowns.size() > 0 ? "найден" : "не найден");
         
         // Чекбоксы цвета
         List<WebElement> colorCheckboxes = driver.findElements(By.xpath("//input[@type='checkbox']"));
-        System.out.println("  Чекбоксов цвета: " + colorCheckboxes.size());
+        logger.info("  Чекбоксов цвета: {}", colorCheckboxes.size());
         
         // Поле комментария
         List<WebElement> commentInputs = driver.findElements(By.xpath("//input[@placeholder='Комментарий для курьера']"));
-        System.out.println("  Поле комментария: " + (commentInputs.size() > 0 ? "найдено" : "не найдено"));
+        logger.info("  Поле комментария: {}", commentInputs.size() > 0 ? "найдено" : "не найдено");
         
         // Кнопка заказа
         List<WebElement> orderButtons = driver.findElements(By.xpath("//button[contains(text(), 'Заказать')]"));
-        System.out.println("  Кнопок заказа: " + orderButtons.size());
+        logger.info("  Кнопок заказа: {}", orderButtons.size());
     }
 
     private void selectDate() {
-        System.out.println("\n--- ВЫБОР ДАТЫ ---");
+        logger.info("--- ВЫБОР ДАТЫ ---");
         
         WebElement dateInput = driver.findElement(By.xpath("//input[@placeholder='* Когда привезти самокат']"));
         dateInput.click();
@@ -128,17 +112,17 @@ public class OrderFormAnalysisTest {
         
         // Ищем доступные дни
         List<WebElement> availableDays = driver.findElements(By.xpath("//div[contains(@class, 'react-datepicker__day') and not(contains(@class, 'disabled'))]"));
-        System.out.println("  Доступных дней: " + availableDays.size());
+        logger.info("  Доступных дней: {}", availableDays.size());
         
         if (availableDays.size() > 0) {
             availableDays.get(0).click();
-            System.out.println("  Выбран день: " + availableDays.get(0).getText());
+            logger.info("  Выбран день: {}", availableDays.get(0).getText());
         } else {
             // Альтернативный поиск
             List<WebElement> calendarDays = driver.findElements(By.xpath("//td[contains(@class, 'day') and not(contains(@class, 'disabled'))]"));
             if (calendarDays.size() > 0) {
                 calendarDays.get(0).click();
-                System.out.println("  Выбран день (альтернативный): " + calendarDays.get(0).getText());
+                logger.info("  Выбран день (альтернативный): {}", calendarDays.get(0).getText());
             }
         }
         
@@ -150,30 +134,30 @@ public class OrderFormAnalysisTest {
     }
 
     private void analyzeAfterDateSelection() {
-        System.out.println("\n--- АНАЛИЗ ПОСЛЕ ВЫБОРА ДАТЫ ---");
+        logger.info("--- АНАЛИЗ ПОСЛЕ ВЫБОРА ДАТЫ ---");
         
         // Проверяем, что поле даты заполнено
         WebElement dateInput = driver.findElement(By.xpath("//input[@placeholder='* Когда привезти самокат']"));
         String dateValue = dateInput.getAttribute("value");
-        System.out.println("  Значение поля даты: '" + dateValue + "'");
+        logger.info("  Значение поля даты: '{}'", dateValue);
         
         // Проверяем доступность других полей
         List<WebElement> rentalDropdowns = driver.findElements(By.xpath("//div[contains(@class, 'Dropdown-control')]"));
-        System.out.println("  Выпадающий список аренды доступен: " + (rentalDropdowns.size() > 0));
+        logger.info("  Выпадающий список аренды доступен: {}", rentalDropdowns.size() > 0);
         
         List<WebElement> colorCheckboxes = driver.findElements(By.xpath("//input[@type='checkbox']"));
-        System.out.println("  Чекбоксов цвета доступно: " + colorCheckboxes.size());
+        logger.info("  Чекбоксов цвета доступно: {}", colorCheckboxes.size());
         
         for (int i = 0; i < colorCheckboxes.size(); i++) {
             WebElement checkbox = colorCheckboxes.get(i);
             String id = checkbox.getAttribute("id");
             String label = driver.findElement(By.xpath("//label[@for='" + id + "']")).getText();
-            System.out.println("    Чекбокс " + i + ": " + label + " (id: " + id + ")");
+            logger.info("    Чекбокс {}: {} (id: {})", i, label, id);
         }
     }
 
     private void fillRemainingFields() {
-        System.out.println("\n--- ЗАПОЛНЕНИЕ ОСТАЛЬНЫХ ПОЛЕЙ ---");
+        logger.info("--- ЗАПОЛНЕНИЕ ОСТАЛЬНЫХ ПОЛЕЙ ---");
         
         // Закрываем календарь если он открыт
         try {
@@ -194,7 +178,7 @@ public class OrderFormAnalysisTest {
         }
         
         List<WebElement> rentalOptions = driver.findElements(By.xpath("//div[contains(@class, 'Dropdown-option')]"));
-        System.out.println("  Опций аренды: " + rentalOptions.size());
+        logger.info("  Опций аренды: {}", rentalOptions.size());
         
         for (int i = 0; i < rentalOptions.size(); i++) {
             try {
@@ -203,10 +187,10 @@ public class OrderFormAnalysisTest {
                 if (i < freshOptions.size()) {
                     WebElement option = freshOptions.get(i);
                     String optionText = option.getText();
-                    System.out.println("    Опция " + i + ": " + optionText);
+                    logger.info("    Опция {}: {}", i, optionText);
                 }
             } catch (Exception e) {
-                System.out.println("    Ошибка при чтении опции " + i + ": " + e.getMessage());
+                logger.error("    Ошибка при чтении опции {}: {}", i, e.getMessage());
             }
         }
         
@@ -219,54 +203,44 @@ public class OrderFormAnalysisTest {
                     String optionText = option.getText();
                     // Используем JavaScript для клика
                     ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", option);
-                    System.out.println("  Выбрана опция: " + optionText);
+                    logger.info("  Выбрана опция: {}", optionText);
                 }
             } catch (Exception e) {
-                System.out.println("  Ошибка при выборе опции аренды: " + e.getMessage());
+                logger.error("  Ошибка при выборе опции аренды: {}", e.getMessage());
             }
         }
         
         // Выбираем цвет
         List<WebElement> colorCheckboxes = driver.findElements(By.xpath("//input[@type='checkbox']"));
         if (colorCheckboxes.size() > 0) {
-            try {
-                // Перепоиск и выбор первого чекбокса
-                List<WebElement> freshCheckboxes = driver.findElements(By.xpath("//input[@type='checkbox']"));
-                if (freshCheckboxes.size() > 0) {
-                    WebElement checkbox = freshCheckboxes.get(0);
-                    String id = checkbox.getAttribute("id");
-                    // Используем JavaScript для клика
-                    ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", checkbox);
-                    System.out.println("  Выбран цвет с id: " + id);
-                }
-            } catch (Exception e) {
-                System.out.println("  Ошибка при выборе цвета: " + e.getMessage());
+            List<WebElement> freshCheckboxes = driver.findElements(By.xpath("//input[@type='checkbox']"));
+            if (freshCheckboxes.size() > 0) {
+                WebElement checkbox = freshCheckboxes.get(0);
+                String id = checkbox.getAttribute("id");
+                ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", checkbox);
+                logger.info("  Выбран цвет с id: {}", id);
             }
         }
         
         // Вводим комментарий
-        try {
-            WebElement commentInput = driver.findElement(By.xpath("//input[@placeholder='Комментарий для курьера']"));
-            commentInput.sendKeys("Тестовый комментарий");
-            System.out.println("  Введен комментарий");
-        } catch (Exception e) {
-            System.out.println("  Ошибка при вводе комментария: " + e.getMessage());
-        }
+        WebElement commentInput = driver.findElement(By.xpath("//input[@placeholder='Комментарий для курьера']"));
+        commentInput.sendKeys("Тестовый комментарий");
+        logger.info("  Введен комментарий");
     }
 
     private void analyzeOrderButton() {
-        System.out.println("\n--- АНАЛИЗ КНОПКИ ЗАКАЗА ---");
+        logger.info("--- АНАЛИЗ КНОПКИ ЗАКАЗА ---");
         
         List<WebElement> orderButtons = driver.findElements(By.xpath("//button[contains(text(), 'Заказать')]"));
-        System.out.println("  Кнопок заказа найдено: " + orderButtons.size());
+        logger.info("  Кнопок заказа найдено: {}", orderButtons.size());
         
         for (int i = 0; i < orderButtons.size(); i++) {
             WebElement button = orderButtons.get(i);
-            System.out.println("    Кнопка " + i + ": " + button.getText() + " | Класс: " + button.getAttribute("class"));
+            logger.info("    Кнопка {}: {} | Класс: {}", i, button.getText(), button.getAttribute("class"));
         }
         
         if (orderButtons.size() > 0) {
-            System.out.println("  Кликаем по кнопке заказа...");
+            logger.info("  Кликаем по кнопке заказа...");
             orderButtons.get(0).click();
             
             try {
@@ -277,10 +251,10 @@ public class OrderFormAnalysisTest {
             
             // Анализируем модальное окно подтверждения
             List<WebElement> confirmButtons = driver.findElements(By.xpath("//button[contains(text(), 'Да')]"));
-            System.out.println("  Кнопок подтверждения 'Да': " + confirmButtons.size());
+            logger.info("  Кнопок подтверждения 'Да': {}", confirmButtons.size());
             
             if (confirmButtons.size() > 0) {
-                System.out.println("  Кликаем по кнопке подтверждения...");
+                logger.info("  Кликаем по кнопке подтверждения...");
                 confirmButtons.get(0).click();
                 
                 try {
@@ -291,10 +265,10 @@ public class OrderFormAnalysisTest {
                 
                 // Анализируем окно успешного заказа
                 List<WebElement> successModals = driver.findElements(By.xpath("//div[contains(text(), 'Заказ оформлен')]"));
-                System.out.println("  Окон успешного заказа: " + successModals.size());
+                logger.info("  Окон успешного заказа: {}", successModals.size());
                 
                 for (WebElement modal : successModals) {
-                    System.out.println("    Модальное окно: " + modal.getText());
+                    logger.info("    Модальное окно: {}", modal.getText());
                 }
             }
         }

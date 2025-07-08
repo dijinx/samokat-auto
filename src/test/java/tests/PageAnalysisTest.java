@@ -1,6 +1,8 @@
 package tests;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,7 @@ import java.time.Duration;
 import java.util.List;
 
 public class PageAnalysisTest {
+    private static final Logger logger = LogManager.getLogger(PageAnalysisTest.class);
     private WebDriver driver;
     private WebDriverWait wait;
 
@@ -45,7 +48,7 @@ public class PageAnalysisTest {
 
     @Test
     void analyzeMainPageAndOrderFlow() {
-        System.out.println("=== ПОЛНЫЙ АНАЛИЗ САЙТА САМОКАТ ===");
+        logger.info("=== ПОЛНЫЙ АНАЛИЗ САЙТА САМОКАТ ===");
         driver.get("https://qa-scooter.praktikum-services.ru/");
         
         // Анализ главной страницы
@@ -65,40 +68,40 @@ public class PageAnalysisTest {
     }
 
     private void analyzeMainPage() {
-        System.out.println("\n--- АНАЛИЗ ГЛАВНОЙ СТРАНИЦЫ ---");
+        logger.info("--- АНАЛИЗ ГЛАВНОЙ СТРАНИЦЫ ---");
         
         // Заголовок
         List<WebElement> headers = driver.findElements(By.xpath("//h1"));
-        System.out.println("Заголовки H1: " + headers.size());
+        logger.info("Заголовки H1: {}", headers.size());
         for (WebElement header : headers) {
-            System.out.println("  H1: " + header.getText());
+            logger.info("  H1: {}", header.getText());
         }
         
         // Кнопки заказа
         List<WebElement> orderButtons = driver.findElements(By.xpath("//button[contains(text(), 'Заказать')]"));
-        System.out.println("Кнопок 'Заказать': " + orderButtons.size());
+        logger.info("Кнопок 'Заказать': {}", orderButtons.size());
         for (int i = 0; i < orderButtons.size(); i++) {
             WebElement btn = orderButtons.get(i);
-            System.out.println("  Кнопка " + i + ": " + btn.getText() + " | Класс: " + btn.getAttribute("class"));
+            logger.info("  Кнопка {}: {} | Класс: {}", i, btn.getText(), btn.getAttribute("class"));
         }
         
         // Логотипы
         List<WebElement> logos = driver.findElements(By.xpath("//img[contains(@alt, 'Самокат') or contains(@alt, 'Яндекс')]"));
-        System.out.println("Логотипов: " + logos.size());
+        logger.info("Логотипов: {}", logos.size());
         for (WebElement logo : logos) {
-            System.out.println("  Логотип: " + logo.getAttribute("alt") + " | src: " + logo.getAttribute("src"));
+            logger.info("  Логотип: {} | src: {}", logo.getAttribute("alt"), logo.getAttribute("src"));
         }
         
         // Кнопка статуса заказа
         List<WebElement> statusButtons = driver.findElements(By.xpath("//button[contains(text(), 'Статус заказа')]"));
-        System.out.println("Кнопок статуса заказа: " + statusButtons.size());
+        logger.info("Кнопок статуса заказа: {}", statusButtons.size());
         for (WebElement btn : statusButtons) {
-            System.out.println("  Статус кнопка: " + btn.getText() + " | Класс: " + btn.getAttribute("class"));
+            logger.info("  Статус кнопка: {} | Класс: {}", btn.getText(), btn.getAttribute("class"));
         }
     }
 
     private void analyzeFAQ() {
-        System.out.println("\n--- АНАЛИЗ FAQ ---");
+        logger.info("--- АНАЛИЗ FAQ ---");
         
         // Закрываем cookie banner если он есть
         try {
@@ -113,12 +116,12 @@ public class PageAnalysisTest {
         
         // Вопросы FAQ
         List<WebElement> faqQuestions = driver.findElements(By.xpath("//div[@role='button' and contains(@class, 'accordion__button')]"));
-        System.out.println("FAQ вопросов: " + faqQuestions.size());
+        logger.info("FAQ вопросов: {}", faqQuestions.size());
         
         for (int i = 0; i < Math.min(3, faqQuestions.size()); i++) {
             WebElement question = faqQuestions.get(i);
-            System.out.println("  FAQ " + i + ": " + question.getText());
-            System.out.println("    Класс: " + question.getAttribute("class"));
+            logger.info("  FAQ {}: {}", i, question.getText());
+            logger.info("    Класс: {}", question.getAttribute("class"));
             
             // Кликаем по вопросу
             question.click();
@@ -131,22 +134,22 @@ public class PageAnalysisTest {
             
             // Ищем ответ
             List<WebElement> answers = driver.findElements(By.xpath("//div[contains(@class, 'accordion__panel')]"));
-            System.out.println("    Ответов видимо: " + answers.size());
+            logger.info("    Ответов видно: {}", answers.size());
             for (WebElement answer : answers) {
                 if (answer.isDisplayed()) {
-                    System.out.println("    Ответ: " + answer.getText().substring(0, Math.min(50, answer.getText().length())) + "...");
+                    logger.info("    Ответ: {}...", answer.getText().substring(0, Math.min(50, answer.getText().length())));
                 }
             }
         }
     }
 
     private void analyzeOrderButtons() {
-        System.out.println("\n--- АНАЛИЗ КНОПОК ЗАКАЗА И ФОРМЫ ---");
+        logger.info("--- АНАЛИЗ КНОПОК ЗАКАЗА И ФОРМЫ ---");
         
         // Верхняя кнопка заказа
         List<WebElement> topOrderButtons = driver.findElements(By.xpath("//button[contains(text(), 'Заказать')]"));
         if (topOrderButtons.size() > 0) {
-            System.out.println("Кликаем по верхней кнопке заказа...");
+            logger.info("Кликаем по верхней кнопке заказа...");
             topOrderButtons.get(0).click();
             
             try {
@@ -164,7 +167,7 @@ public class PageAnalysisTest {
         // Нижняя кнопка заказа
         List<WebElement> allOrderButtons = driver.findElements(By.xpath("//button[contains(text(), 'Заказать')]"));
         if (allOrderButtons.size() > 1) {
-            System.out.println("Кликаем по нижней кнопке заказа...");
+            logger.info("Кликаем по нижней кнопке заказа...");
             allOrderButtons.get(allOrderButtons.size() - 1).click();
             
             try {
@@ -178,24 +181,24 @@ public class PageAnalysisTest {
     }
 
     private void analyzeOrderForm(String buttonType) {
-        System.out.println("\n--- АНАЛИЗ ФОРМЫ ЗАКАЗА (" + buttonType + ") ---");
+        logger.info("--- АНАЛИЗ ФОРМЫ ЗАКАЗА ({} )---", buttonType);
         
         // Поля ввода
         List<WebElement> inputs = driver.findElements(By.xpath("//input"));
-        System.out.println("Полей ввода: " + inputs.size());
+        logger.info("Полей ввода: {}", inputs.size());
         
         for (WebElement input : inputs) {
             String placeholder = input.getAttribute("placeholder");
             String className = input.getAttribute("class");
             String id = input.getAttribute("id");
-            System.out.println("  Поле: placeholder='" + placeholder + "' | class='" + className + "' | id='" + id + "'");
+            logger.info("  Поле: placeholder='{}' | class='{}' | id='{}'", placeholder, className, id);
         }
         
         // Кнопка "Далее"
         List<WebElement> nextButtons = driver.findElements(By.xpath("//button[contains(text(), 'Далее')]"));
-        System.out.println("Кнопок 'Далее': " + nextButtons.size());
+        logger.info("Кнопок 'Далее': {}", nextButtons.size());
         for (WebElement btn : nextButtons) {
-            System.out.println("  Кнопка Далее: " + btn.getText() + " | Класс: " + btn.getAttribute("class"));
+            logger.info("  Кнопка Далее: {} | Класс: {}", btn.getText(), btn.getAttribute("class"));
         }
         
         // Анализ выпадающего списка метро
@@ -212,12 +215,12 @@ public class PageAnalysisTest {
     }
 
     private void analyzeMetroDropdown() {
-        System.out.println("\n--- АНАЛИЗ ВЫПАДАЮЩЕГО СПИСКА МЕТРО ---");
+        logger.info("--- АНАЛИЗ ВЫПАДАЮЩЕГО СПИСКА МЕТРО ---");
         
         List<WebElement> metroInputs = driver.findElements(By.xpath("//input[contains(@placeholder, 'Станция метро')]"));
         if (metroInputs.size() > 0) {
             WebElement metroInput = metroInputs.get(0);
-            System.out.println("Поле метро найдено: " + metroInput.getAttribute("placeholder"));
+            logger.info("Поле метро найдено: {}", metroInput.getAttribute("placeholder"));
             
             // Кликаем и вводим текст
             metroInput.click();
@@ -231,11 +234,11 @@ public class PageAnalysisTest {
             
             // Ищем опции
             List<WebElement> metroOptions = driver.findElements(By.xpath("//div[contains(@class, 'Order_Text__2broi')]"));
-            System.out.println("Опций метро: " + metroOptions.size());
+            logger.info("Опций метро: {}", metroOptions.size());
             
             for (int i = 0; i < Math.min(10, metroOptions.size()); i++) {
                 WebElement option = metroOptions.get(i);
-                System.out.println("  Опция " + i + ": " + option.getText() + " | Класс: " + option.getAttribute("class"));
+                logger.info("  Опция {}: {} | Класс: {}", i, option.getText(), option.getAttribute("class"));
             }
             
             // Кликаем по первой опции
@@ -248,23 +251,23 @@ public class PageAnalysisTest {
                         WebElement option = freshOptions.get(0);
                         String optionText = option.getText();
                         ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", option);
-                        System.out.println("  Выбрана опция: " + optionText);
+                        logger.info("  Выбрана опция: {}", optionText);
                     }
                 } catch (Exception e) {
-                    System.out.println("  Ошибка при выборе опции метро: " + e.getMessage());
+                    logger.error("  Ошибка при выборе опции метро: {}", e.getMessage());
                 }
             }
         }
     }
 
     private void analyzeDateCalendar() {
-        System.out.println("\n--- АНАЛИЗ КАЛЕНДАРЯ ДАТЫ ---");
+        logger.info("--- АНАЛИЗ КАЛЕНДАРЯ ДАТЫ ---");
         
         List<WebElement> dateInputs = driver.findElements(By.xpath("//input[contains(@placeholder, 'Когда привезти')]"));
         if (dateInputs.size() > 0) {
             WebElement dateInput = dateInputs.get(0);
-            System.out.println("Поле даты найдено: " + dateInput.getAttribute("placeholder"));
-            System.out.println("Класс поля даты: " + dateInput.getAttribute("class"));
+            logger.info("Поле даты найдено: {}", dateInput.getAttribute("placeholder"));
+            logger.info("Класс поля даты: {}", dateInput.getAttribute("class"));
             
             // Кликаем по полю даты
             dateInput.click();
@@ -277,43 +280,43 @@ public class PageAnalysisTest {
             
             // Ищем календарь
             List<WebElement> calendarElements = driver.findElements(By.xpath("//div[contains(@class, 'react-datepicker')]"));
-            System.out.println("Элементов календаря: " + calendarElements.size());
+            logger.info("Элементов календаря: {}", calendarElements.size());
             
             if (calendarElements.size() > 0) {
-                System.out.println("Календарь найден!");
+                logger.info("Календарь найден!");
                 
                 // Ищем дни в календаре
                 List<WebElement> dayElements = driver.findElements(By.xpath("//div[contains(@class, 'react-datepicker__day') and not(contains(@class, 'disabled'))]"));
-                System.out.println("Доступных дней: " + dayElements.size());
+                logger.info("Доступных дней: {}", dayElements.size());
                 
                 for (int i = 0; i < Math.min(5, dayElements.size()); i++) {
                     WebElement day = dayElements.get(i);
-                    System.out.println("  День " + i + ": " + day.getText() + " | Класс: " + day.getAttribute("class"));
+                    logger.info("  День {}: {} | Класс: {}", i, day.getText(), day.getAttribute("class"));
                 }
                 
                 // Кликаем по первому доступному дню
                 if (dayElements.size() > 0) {
                     dayElements.get(0).click();
-                    System.out.println("  Выбран день: " + dayElements.get(0).getText());
+                    logger.info("  Выбран день: {}", dayElements.get(0).getText());
                 }
             } else {
                 // Попробуем другие локаторы для календаря
                 List<WebElement> datePickers = driver.findElements(By.xpath("//div[contains(@class, 'datepicker')]"));
-                System.out.println("Элементов datepicker: " + datePickers.size());
+                logger.info("Элементов datepicker: {}", datePickers.size());
                 
                 List<WebElement> calendarDays = driver.findElements(By.xpath("//td[contains(@class, 'day') and not(contains(@class, 'disabled'))]"));
-                System.out.println("Дней в календаре: " + calendarDays.size());
+                logger.info("Дней в календаре: {}", calendarDays.size());
                 
                 for (int i = 0; i < Math.min(5, calendarDays.size()); i++) {
                     WebElement day = calendarDays.get(i);
-                    System.out.println("  День календаря " + i + ": " + day.getText() + " | Класс: " + day.getAttribute("class"));
+                    logger.info("  День календаря {}: {} | Класс: {}", i, day.getText(), day.getAttribute("class"));
                 }
             }
         }
     }
 
     private void fillOrderFormFirstPage() {
-        System.out.println("\n--- ЗАПОЛНЕНИЕ ПЕРВОЙ СТРАНИЦЫ ФОРМЫ ---");
+        logger.info("--- ЗАПОЛНЕНИЕ ПЕРВОЙ СТРАНИЦЫ ФОРМЫ ---");
         
         // Заполняем поля
         List<WebElement> nameInputs = driver.findElements(By.xpath("//input[@placeholder='* Имя']"));
@@ -350,24 +353,24 @@ public class PageAnalysisTest {
     }
 
     private void analyzeOrderFormSecondPage() {
-        System.out.println("\n--- АНАЛИЗ ВТОРОЙ СТРАНИЦЫ ФОРМЫ ---");
+        logger.info("--- АНАЛИЗ ВТОРОЙ СТРАНИЦЫ ФОРМЫ ---");
         
         // Поля второй страницы
         List<WebElement> dateInputs = driver.findElements(By.xpath("//input[contains(@placeholder, 'Когда привезти')]"));
-        System.out.println("Полей даты: " + dateInputs.size());
+        logger.info("Полей даты: {}", dateInputs.size());
         
         List<WebElement> rentalDropdowns = driver.findElements(By.xpath("//div[contains(@class, 'Dropdown-control')]"));
-        System.out.println("Выпадающих списков аренды: " + rentalDropdowns.size());
+        logger.info("Выпадающих списков аренды: {}", rentalDropdowns.size());
         
         List<WebElement> colorCheckboxes = driver.findElements(By.xpath("//input[@type='checkbox']"));
-        System.out.println("Чекбоксов цвета: " + colorCheckboxes.size());
+        logger.info("Чекбоксов цвета: {}", colorCheckboxes.size());
         
         List<WebElement> commentInputs = driver.findElements(By.xpath("//input[@placeholder='Комментарий для курьера']"));
-        System.out.println("Полей комментария: " + commentInputs.size());
+        logger.info("Полей комментария: {}", commentInputs.size());
         
         // Кнопка "Заказать"
         List<WebElement> orderButtons = driver.findElements(By.xpath("//button[contains(text(), 'Заказать')]"));
-        System.out.println("Кнопок 'Заказать' на второй странице: " + orderButtons.size());
+        logger.info("Кнопок 'Заказать' на второй странице: {}", orderButtons.size());
         
         // Заполняем вторую страницу
         if (dateInputs.size() > 0) {
@@ -404,9 +407,9 @@ public class PageAnalysisTest {
             }
             
             List<WebElement> rentalOptions = driver.findElements(By.xpath("//div[contains(@class, 'Dropdown-option')]"));
-            System.out.println("Опций аренды: " + rentalOptions.size());
+            logger.info("Опций аренды: {}", rentalOptions.size());
             for (WebElement option : rentalOptions) {
-                System.out.println("  Опция аренды: " + option.getText());
+                logger.info("  Опция аренды: {}", option.getText());
             }
             
             if (rentalOptions.size() > 0) {
@@ -430,14 +433,14 @@ public class PageAnalysisTest {
                 String className = button.getAttribute("class");
                 if (className.contains("Button_Middle__1CSJM")) {
                     targetButton = button;
-                    System.out.println("Найдена кнопка 'Заказать' с нужным классом: " + className);
+                    logger.info("Найдена кнопка 'Заказать' с нужным классом: {}", className);
                     break;
                 }
             }
             
             if (targetButton == null) {
                 targetButton = orderButtons.get(0);
-                System.out.println("Используем первую найденную кнопку 'Заказать'");
+                logger.info("Используем первую найденную кнопку 'Заказать'");
             }
             
             targetButton.click();
@@ -454,10 +457,10 @@ public class PageAnalysisTest {
     }
 
     private void analyzeConfirmationModal() {
-        System.out.println("\n--- АНАЛИЗ МОДАЛЬНОГО ОКНА ПОДТВЕРЖДЕНИЯ ---");
+        logger.info("--- АНАЛИЗ МОДАЛЬНОГО ОКНА ПОДТВЕРЖДЕНИЯ ---");
         
         List<WebElement> confirmButtons = driver.findElements(By.xpath("//button[contains(text(), 'Да')]"));
-        System.out.println("Кнопок подтверждения 'Да': " + confirmButtons.size());
+        logger.info("Кнопок подтверждения 'Да': {}", confirmButtons.size());
         
         if (confirmButtons.size() > 0) {
             confirmButtons.get(0).click();
@@ -470,25 +473,25 @@ public class PageAnalysisTest {
             
             // Анализ окна успешного заказа
             List<WebElement> successModals = driver.findElements(By.xpath("//div[contains(text(), 'Заказ оформлен')]"));
-            System.out.println("Окон успешного заказа: " + successModals.size());
+            logger.info("Окон успешного заказа: {}", successModals.size());
             
             for (WebElement modal : successModals) {
-                System.out.println("  Модальное окно: " + modal.getText());
+                logger.info("  Модальное окно: {}", modal.getText());
             }
         }
     }
 
     private void analyzeLogos() {
-        System.out.println("\n--- АНАЛИЗ ЛОГОТИПОВ И ПЕРЕХОДОВ ---");
+        logger.info("--- АНАЛИЗ ЛОГОТИПОВ И ПЕРЕХОДОВ ---");
         
         driver.get("https://qa-scooter.praktikum-services.ru/");
         
         // Логотип Самокат
         List<WebElement> samokatLogos = driver.findElements(By.xpath("//img[contains(@alt, 'Самокат')]"));
-        System.out.println("Логотипов Самокат: " + samokatLogos.size());
+        logger.info("Логотипов Самокат: {}", samokatLogos.size());
         
         if (samokatLogos.size() > 0) {
-            System.out.println("Кликаем по логотипу Самокат...");
+            logger.info("Кликаем по логотипу Самокат...");
             samokatLogos.get(0).click();
             
             try {
@@ -497,16 +500,16 @@ public class PageAnalysisTest {
                 Thread.currentThread().interrupt();
             }
             
-            System.out.println("URL после клика по логотипу Самокат: " + driver.getCurrentUrl());
+            logger.info("URL после клика по логотипу Самокат: {}", driver.getCurrentUrl());
         }
         
         // Логотип Яндекс
         driver.get("https://qa-scooter.praktikum-services.ru/");
         List<WebElement> yandexLogos = driver.findElements(By.xpath("//img[contains(@alt, 'Яндекс')]"));
-        System.out.println("Логотипов Яндекс: " + yandexLogos.size());
+        logger.info("Логотипов Яндекс: {}", yandexLogos.size());
         
         if (yandexLogos.size() > 0) {
-            System.out.println("Кликаем по логотипу Яндекс...");
+            logger.info("Кликаем по логотипу Яндекс...");
             yandexLogos.get(0).click();
             
             try {
@@ -515,21 +518,21 @@ public class PageAnalysisTest {
                 Thread.currentThread().interrupt();
             }
             
-            System.out.println("URL после клика по логотипу Яндекс: " + driver.getCurrentUrl());
+            logger.info("URL после клика по логотипу Яндекс: {}", driver.getCurrentUrl());
         }
     }
 
     private void analyzeOrderStatusPage() {
-        System.out.println("\n--- АНАЛИЗ СТРАНИЦЫ СТАТУСА ЗАКАЗА ---");
+        logger.info("--- АНАЛИЗ СТРАНИЦЫ СТАТУСА ЗАКАЗА ---");
         
         driver.get("https://qa-scooter.praktikum-services.ru/");
         
         // Кнопка статуса заказа
         List<WebElement> statusButtons = driver.findElements(By.xpath("//button[contains(text(), 'Статус заказа')]"));
-        System.out.println("Кнопок статуса заказа: " + statusButtons.size());
+        logger.info("Кнопок статуса заказа: {}", statusButtons.size());
         
         if (statusButtons.size() > 0) {
-            System.out.println("Кликаем по кнопке статуса заказа...");
+            logger.info("Кликаем по кнопке статуса заказа...");
             statusButtons.get(0).click();
             
             try {
@@ -540,20 +543,20 @@ public class PageAnalysisTest {
             
             // Анализ полей на странице статуса
             List<WebElement> statusInputs = driver.findElements(By.xpath("//input"));
-            System.out.println("Полей на странице статуса: " + statusInputs.size());
+            logger.info("Полей на странице статуса: {}", statusInputs.size());
             
             for (WebElement input : statusInputs) {
                 String placeholder = input.getAttribute("placeholder");
                 String className = input.getAttribute("class");
-                System.out.println("  Поле статуса: placeholder='" + placeholder + "' | class='" + className + "'");
+                logger.info("  Поле статуса: placeholder='{}' | class='{}'", placeholder, className);
             }
             
             // Кнопка "Go!"
             List<WebElement> goButtons = driver.findElements(By.xpath("//button[contains(text(), 'Go!')]"));
-            System.out.println("Кнопок 'Go!': " + goButtons.size());
+            logger.info("Кнопок 'Go!': {}", goButtons.size());
             
             if (goButtons.size() > 0) {
-                System.out.println("Кликаем по кнопке 'Go!'...");
+                logger.info("Кликаем по кнопке 'Go!'...");
                 goButtons.get(0).click();
                 
                 try {
@@ -564,10 +567,10 @@ public class PageAnalysisTest {
                 
                 // Анализ результата
                 List<WebElement> resultElements = driver.findElements(By.xpath("//div[contains(@class, 'Track_NotFound')]"));
-                System.out.println("Элементов 'не найдено': " + resultElements.size());
+                logger.info("Элементов 'не найдено': {}", resultElements.size());
                 
                 for (WebElement element : resultElements) {
-                    System.out.println("  Результат: " + element.getText());
+                    logger.info("  Результат: {}", element.getText());
                 }
             }
         }

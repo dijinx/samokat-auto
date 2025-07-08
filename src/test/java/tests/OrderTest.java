@@ -13,8 +13,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.openqa.selenium.WebElement;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class OrderTest {
+    private static final Logger logger = LogManager.getLogger(OrderTest.class);
     private WebDriver driver;
 
     @BeforeEach
@@ -61,52 +64,52 @@ public class OrderTest {
         assertTrue(orderPage.clickOrderButton(), "Кнопка 'Заказать' не была нажата успешно");
         
         // Нажимаем кнопку "Да" с проверкой
-        System.out.println("=== ПОДТВЕРЖДЕНИЕ ЗАКАЗА ===");
+        logger.info("=== ПОДТВЕРЖДЕНИЕ ЗАКАЗА ===");
         boolean confirmResult = orderPage.confirmOrder();
         
         if (!confirmResult) {
-            System.out.println("ОШИБКА: Кнопка 'Да' не сработала или заказ не был оформлен!");
-            System.out.println("Возможно, есть проблемы с оформлением заказа на тестовом стенде.");
+            logger.error("ОШИБКА: Кнопка 'Да' не сработала или заказ не был оформлен!");
+            logger.warn("Возможно, есть проблемы с оформлением заказа на тестовом стенде.");
             
             // Дополнительная диагностика
             String statusMessage = orderPage.getOrderStatusMessage();
-            System.out.println("Текущий статус: " + statusMessage);
+            logger.info("Текущий статус: {}", statusMessage);
             
             // Проверяем, есть ли модальное окно успешного заказа
             boolean successModal = orderPage.isSuccessModalVisible();
-            System.out.println("Модальное окно успешного заказа видимо: " + successModal);
+            logger.info("Модальное окно успешного заказа видно: {}", successModal);
         }
         
         assertTrue(confirmResult, "Заказ не был успешно оформлен после нажатия кнопки 'Да'. Проверьте логи выше для деталей.");
         
         // Дополнительная проверка успешного оформления
-        System.out.println("=== ФИНАЛЬНАЯ ПРОВЕРКА УСПЕШНОГО ЗАКАЗА ===");
+        logger.info("=== ФИНАЛЬНАЯ ПРОВЕРКА УСПЕШНОГО ЗАКАЗА ===");
         boolean successModalVisible = orderPage.isSuccessModalVisible();
         String orderStatus = orderPage.getOrderStatusMessage();
         
-        System.out.println("Модальное окно успешного заказа видимо: " + successModalVisible);
-        System.out.println("Статус заказа: " + orderStatus);
+        logger.info("Модальное окно успешного заказа видно: {}", successModalVisible);
+        logger.info("Статус заказа: {}", orderStatus);
         
         // Проверяем, что заказ действительно оформлен
         assertTrue(successModalVisible || orderStatus.contains("оформлен") || orderStatus.contains("№") || orderStatus.contains("номер"), 
                   "Заказ не был оформлен. Статус: " + orderStatus);
         
-        System.out.println("✓ ЗАКАЗ УСПЕШНО ОФОРМЛЕН И ПОДТВЕРЖДЕН!");
+        logger.info("✓ ЗАКАЗ УСПЕШНО ОФОРМЛЕН И ПОДТВЕРЖДЕН!");
         
         // Нажимаем кнопку "Посмотреть статус"
-        System.out.println("=== ПЕРЕХОД К ПРОСМОТРУ СТАТУСА ЗАКАЗА ===");
+        logger.info("=== ПЕРЕХОД К ПРОСМОТРУ СТАТУСА ЗАКАЗА ===");
         boolean statusButtonClicked = orderPage.clickViewStatusButton();
         
         if (statusButtonClicked) {
-            System.out.println("✓ УСПЕШНО ПЕРЕШЛИ НА СТРАНИЦУ СТАТУСА ЗАКАЗА!");
+            logger.info("✓ УСПЕШНО ПЕРЕШЛИ НА СТРАНИЦУ СТАТУСА ЗАКАЗА!");
         } else {
-            System.out.println("✗ НЕ УДАЛОСЬ ПЕРЕЙТИ НА СТРАНИЦУ СТАТУСА ЗАКАЗА!");
-            System.out.println("Возможно, кнопка 'Посмотреть статус' не появилась или не работает.");
+            logger.error("✗ НЕ УДАЛОСЬ ПЕРЕЙТИ НА СТРАНИЦУ СТАТУСА ЗАКАЗА!");
+            logger.warn("Возможно, кнопка 'Посмотреть статус' не появилась или не работает.");
         }
         
         // Проверяем успешность перехода (не строго обязательно)
         if (statusButtonClicked) {
-            System.out.println("✓ ПОЛНЫЙ ЦИКЛ ОФОРМЛЕНИЯ И ПРОСМОТРА СТАТУСА ЗАВЕРШЕН!");
+            logger.info("✓ ПОЛНЫЙ ЦИКЛ ОФОРМЛЕНИЯ И ПРОСМОТРА СТАТУСА ЗАВЕРШЕН!");
         }
     }
 
@@ -133,58 +136,58 @@ public class OrderTest {
         assertTrue(orderPage.clickOrderButton(), "Кнопка 'Заказать' не была нажата успешно");
         
         // Нажимаем кнопку "Да" с проверкой
-        System.out.println("=== ПОДТВЕРЖДЕНИЕ ЗАКАЗА ===");
+        logger.info("=== ПОДТВЕРЖДЕНИЕ ЗАКАЗА ===");
         boolean confirmResult = orderPage.confirmOrder();
         
         if (!confirmResult) {
-            System.out.println("ОШИБКА: Кнопка 'Да' не сработала или заказ не был оформлен!");
-            System.out.println("Возможно, есть проблемы с оформлением заказа на тестовом стенде.");
+            logger.error("ОШИБКА: Кнопка 'Да' не сработала или заказ не был оформлен!");
+            logger.warn("Возможно, есть проблемы с оформлением заказа на тестовом стенде.");
             
             // Дополнительная диагностика
             String statusMessage = orderPage.getOrderStatusMessage();
-            System.out.println("Текущий статус: " + statusMessage);
+            logger.info("Текущий статус: {}", statusMessage);
             
             // Проверяем, есть ли модальное окно успешного заказа
             boolean successModal = orderPage.isSuccessModalVisible();
-            System.out.println("Модальное окно успешного заказа видимо: " + successModal);
+            logger.info("Модальное окно успешного заказа видно: {}", successModal);
         }
         
         assertTrue(confirmResult, "Заказ не был успешно оформлен после нажатия кнопки 'Да'. Проверьте логи выше для деталей.");
         
         // Дополнительная проверка успешного оформления
-        System.out.println("=== ФИНАЛЬНАЯ ПРОВЕРКА УСПЕШНОГО ЗАКАЗА ===");
+        logger.info("=== ФИНАЛЬНАЯ ПРОВЕРКА УСПЕШНОГО ЗАКАЗА ===");
         boolean successModalVisible = orderPage.isSuccessModalVisible();
         String orderStatus = orderPage.getOrderStatusMessage();
         
-        System.out.println("Модальное окно успешного заказа видимо: " + successModalVisible);
-        System.out.println("Статус заказа: " + orderStatus);
+        logger.info("Модальное окно успешного заказа видно: {}", successModalVisible);
+        logger.info("Статус заказа: {}", orderStatus);
         
         // Проверяем, что заказ действительно оформлен
         assertTrue(successModalVisible || orderStatus.contains("оформлен") || orderStatus.contains("№") || orderStatus.contains("номер"), 
                   "Заказ не был оформлен. Статус: " + orderStatus);
         
-        System.out.println("✓ ЗАКАЗ УСПЕШНО ОФОРМЛЕН И ПОДТВЕРЖДЕН!");
+        logger.info("✓ ЗАКАЗ УСПЕШНО ОФОРМЛЕН И ПОДТВЕРЖДЕН!");
         
         // Нажимаем кнопку "Посмотреть статус"
-        System.out.println("=== ПЕРЕХОД К ПРОСМОТРУ СТАТУСА ЗАКАЗА ===");
+        logger.info("=== ПЕРЕХОД К ПРОСМОТРУ СТАТУСА ЗАКАЗА ===");
         boolean statusButtonClicked = orderPage.clickViewStatusButton();
         
         if (statusButtonClicked) {
-            System.out.println("✓ УСПЕШНО ПЕРЕШЛИ НА СТРАНИЦУ СТАТУСА ЗАКАЗА!");
+            logger.info("✓ УСПЕШНО ПЕРЕШЛИ НА СТРАНИЦУ СТАТУСА ЗАКАЗА!");
         } else {
-            System.out.println("✗ НЕ УДАЛОСЬ ПЕРЕЙТИ НА СТРАНИЦУ СТАТУСА ЗАКАЗА!");
-            System.out.println("Возможно, кнопка 'Посмотреть статус' не появилась или не работает.");
+            logger.error("✗ НЕ УДАЛОСЬ ПЕРЕЙТИ НА СТРАНИЦУ СТАТУСА ЗАКАЗА!");
+            logger.warn("Возможно, кнопка 'Посмотреть статус' не появилась или не работает.");
         }
         
         // Проверяем успешность перехода (не строго обязательно)
         if (statusButtonClicked) {
-            System.out.println("✓ ПОЛНЫЙ ЦИКЛ ОФОРМЛЕНИЯ И ПРОСМОТРА СТАТУСА ЗАВЕРШЕН!");
+            logger.info("✓ ПОЛНЫЙ ЦИКЛ ОФОРМЛЕНИЯ И ПРОСМОТРА СТАТУСА ЗАВЕРШЕН!");
         }
     }
 
     @Test
     void testCompleteOrderFlowWithStatusCheck() {
-        System.out.println("=== ПОЛНЫЙ ТЕСТ ОФОРМЛЕНИЯ ЗАКАЗА С ПРОВЕРКОЙ СТАТУСА ===");
+        logger.info("=== ПОЛНЫЙ ТЕСТ ОФОРМЛЕНИЯ ЗАКАЗА С ПРОВЕРКОЙ СТАТУСА ===");
         
         MainPage mainPage = new MainPage(driver);
         OrderPage orderPage = new OrderPage(driver);
@@ -203,7 +206,7 @@ public class OrderTest {
         assertTrue(orderPage.clickOrderButton(), "Кнопка 'Заказать' не была нажата успешно");
         
         // Подтверждаем заказ
-        System.out.println("=== ПОДТВЕРЖДЕНИЕ ЗАКАЗА ===");
+        logger.info("=== ПОДТВЕРЖДЕНИЕ ЗАКАЗА ===");
         boolean confirmResult = orderPage.confirmOrder();
         assertTrue(confirmResult, "Заказ не был успешно оформлен после нажатия кнопки 'Да'");
         
@@ -213,15 +216,15 @@ public class OrderTest {
         assertTrue(successModalVisible || orderStatus.contains("оформлен") || orderStatus.contains("№") || orderStatus.contains("номер"), 
                   "Заказ не был оформлен. Статус: " + orderStatus);
         
-        System.out.println("✓ ЗАКАЗ УСПЕШНО ОФОРМЛЕН!");
+        logger.info("✓ ЗАКАЗ УСПЕШНО ОФОРМЛЕН!");
         
         // Нажимаем кнопку "Посмотреть статус"
-        System.out.println("=== ПЕРЕХОД К ПРОСМОТРУ СТАТУСА ЗАКАЗА ===");
+        logger.info("=== ПЕРЕХОД К ПРОСМОТРУ СТАТУСА ЗАКАЗА ===");
         boolean statusButtonClicked = orderPage.clickViewStatusButton();
         
         // Проверяем успешность перехода на страницу статуса
         assertTrue(statusButtonClicked, "Не удалось перейти на страницу статуса заказа");
         
-        System.out.println("✓ ПОЛНЫЙ ЦИКЛ ОФОРМЛЕНИЯ И ПРОСМОТРА СТАТУСА ЗАВЕРШЕН УСПЕШНО!");
+        logger.info("✓ ПОЛНЫЙ ЦИКЛ ОФОРМЛЕНИЯ И ПРОСМОТРА СТАТУСА ЗАВЕРШЕН УСПЕШНО!");
     }
 } 

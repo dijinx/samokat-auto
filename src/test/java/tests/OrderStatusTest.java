@@ -1,6 +1,8 @@
 package tests;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,7 @@ import pageobject.OrderPage;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class OrderStatusTest {
+    private static final Logger logger = LogManager.getLogger(OrderStatusTest.class);
     private WebDriver driver;
 
     @BeforeEach
@@ -49,7 +52,7 @@ public class OrderStatusTest {
         
         // Проверяем, что появилось сообщение о том, что заказ не найден
         assertTrue(mainPage.isOrderNotFoundMessageVisible(), "Сообщение о том, что заказ не найден, не появилось");
-        System.out.println("Сообщение о том, что заказ не найден, отображается (текст может быть пустым)");
+        logger.info("Сообщение о том, что заказ не найден, отображается (текст может быть пустым)");
     }
 
     @Test
@@ -70,6 +73,6 @@ public class OrderStatusTest {
         boolean success = orderPage.isSuccessModalVisible();
         String status = orderPage.getOrderStatusMessage();
         assertTrue(success || !status.contains("Хотите оформить заказ"), "Окно успешного заказа не появилось и окно подтверждения не исчезло");
-        System.out.println("Статус заказа: " + status);
+        logger.info("Статус заказа: {}", status);
     }
 } 

@@ -1,6 +1,8 @@
 package tests;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +12,7 @@ import pageobject.MainPage;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LogoTest {
+    private static final Logger logger = LogManager.getLogger(LogoTest.class);
     private WebDriver driver;
 
     @BeforeEach
@@ -74,7 +77,7 @@ public class LogoTest {
         
         // Проверяем, что перешли на страницу Яндекса
         String currentUrl = driver.getCurrentUrl();
-        System.out.println("Current URL in new tab: " + currentUrl);
+        logger.info("Current URL in new tab: {}", currentUrl);
         assertTrue(currentUrl.contains("yandex") || currentUrl.contains("dzen") || currentUrl.contains("ya.ru"));
         
         // Закрываем новую вкладку и возвращаемся к исходной

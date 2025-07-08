@@ -7,10 +7,13 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OrderPage {
     private WebDriver driver;
     private WebDriverWait wait;
+    private static final Logger logger = LoggerFactory.getLogger(OrderPage.class);
 
     public OrderPage(WebDriver driver) {
         this.driver = driver;
@@ -803,5 +806,104 @@ public class OrderPage {
         }
         
         return transitionSuccessful;
+    }
+
+    public void analyzeSecondPageFields() {
+        List<WebElement> dateInputs = driver.findElements(By.xpath("//input[contains(@placeholder, 'Когда привезти')]"));
+        logger.info("  Поле даты: {}", dateInputs.size() > 0 ? "найдено" : "не найдено");
+        List<WebElement> rentalDropdowns = driver.findElements(By.xpath("//div[contains(@class, 'Dropdown-control')]"));
+        logger.info("  Выпадающий список аренды: {}", rentalDropdowns.size() > 0 ? "найден" : "не найден");
+        List<WebElement> colorCheckboxes = driver.findElements(By.xpath("//input[@type='checkbox']"));
+        logger.info("  Чекбоксов цвета: {}", colorCheckboxes.size());
+        List<WebElement> commentInputs = driver.findElements(By.xpath("//input[@placeholder='Комментарий для курьера']"));
+        logger.info("  Поле комментария: {}", commentInputs.size() > 0 ? "найдено" : "не найдено");
+        List<WebElement> orderButtons = driver.findElements(By.xpath("//button[contains(text(), 'Заказать')]"));
+        logger.info("  Кнопок заказа: {}", orderButtons.size());
+    }
+
+    public void selectDate() {
+        WebElement dateInput = driver.findElement(By.xpath("//input[@placeholder='* Когда привезти самокат']"));
+        dateInput.click();
+        try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+        List<WebElement> availableDays = driver.findElements(By.xpath("//div[contains(@class, 'react-datepicker__day') and not(contains(@class, 'disabled'))]"));
+        logger.info("  Доступных дней: {}", availableDays.size());
+        if (availableDays.size() > 0) {
+            availableDays.get(0).click();
+            logger.info("  Выбран день: {}", availableDays.get(0).getText());
+        } else {
+            List<WebElement> calendarDays = driver.findElements(By.xpath("//td[contains(@class, 'day') and not(contains(@class, 'disabled'))]"));
+            if (calendarDays.size() > 0) {
+                calendarDays.get(0).click();
+                logger.info("  Выбран день (альтернативный): {}", calendarDays.get(0).getText());
+            }
+        }
+        try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+    }
+
+    public void analyzeAfterDateSelection() {
+        WebElement dateInput = driver.findElement(By.xpath("//input[@placeholder='* Когда привезти самокат']"));
+        String dateValue = dateInput.getAttribute("value");
+        logger.info("  Значение поля даты: '{}'", dateValue);
+        List<WebElement> rentalDropdowns = driver.findElements(By.xpath("//div[contains(@class, 'Dropdown-control')]"));
+        logger.info("  Выпадающий список аренды доступен: {}", rentalDropdowns.size() > 0);
+        List<WebElement> colorCheckboxes = driver.findElements(By.xpath("//input[@type='checkbox']"));
+        logger.info("  Чекбоксов цвета доступно: {}", colorCheckboxes.size());
+        for (int i = 0; i < colorCheckboxes.size(); i++) {
+            WebElement checkbox = colorCheckboxes.get(i);
+            String id = checkbox.getAttribute("id");
+            String label = driver.findElement(By.xpath("//label[@for='" + id + "']")).getText();
+            logger.info("    Чекбокс {}: {} (id: {})", i, label, id);
+        }
+    }
+
+    public void fillRemainingFields() {
+        try { driver.findElement(By.tagName("body")).click(); Thread.sleep(1000); } catch (Exception e) {}
+        WebElement rentalDropdown = driver.findElement(By.xpath("//div[contains(@class, 'Dropdown-control')]"));
+        rentalDropdown.click();
+        try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+        List<WebElement> rentalOptions = driver.findElements(By.xpath("//div[contains(@class, 'Dropdown-option')]"));
+        logger.info("  Опций аренды: {}", rentalOptions.size());
+        if (rentalOptions.size() > 0) {
+            WebElement option = rentalOptions.get(0);
+            String optionText = option.getText();
+            ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", option);
+            logger.info("  Выбрана опция: {}", optionText);
+        }
+        List<WebElement> colorCheckboxes = driver.findElements(By.xpath("//input[@type='checkbox']"));
+        if (colorCheckboxes.size() > 0) {
+            WebElement checkbox = colorCheckboxes.get(0);
+            String id = checkbox.getAttribute("id");
+            ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", checkbox);
+            logger.info("  Выбран цвет с id: {}", id);
+        }
+        WebElement commentInput = driver.findElement(By.xpath("//input[@placeholder='Комментарий для курьера']"));
+        commentInput.sendKeys("Тестовый комментарий");
+        logger.info("  Введен комментарий");
+    }
+
+    public void analyzeOrderButton() {
+        List<WebElement> orderButtons = driver.findElements(By.xpath("//button[contains(text(), 'Заказать')]"));
+        logger.info("  Кнопок заказа найдено: {}", orderButtons.size());
+        for (int i = 0; i < orderButtons.size(); i++) {
+            WebElement button = orderButtons.get(i);
+            logger.info("    Кнопка {}: {} | Класс: {}", i, button.getText(), button.getAttribute("class"));
+        }
+        if (orderButtons.size() > 0) {
+            logger.info("  Кликаем по кнопке заказа...");
+            orderButtons.get(0).click();
+            try { Thread.sleep(2000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+            List<WebElement> confirmButtons = driver.findElements(By.xpath("//button[contains(text(), 'Да')]"));
+            logger.info("  Кнопок подтверждения 'Да': {}", confirmButtons.size());
+            if (confirmButtons.size() > 0) {
+                logger.info("  Кликаем по кнопке подтверждения...");
+                confirmButtons.get(0).click();
+                try { Thread.sleep(2000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+                List<WebElement> successModals = driver.findElements(By.xpath("//div[contains(text(), 'Заказ оформлен')]"));
+                logger.info("  Окон успешного заказа: {}", successModals.size());
+                for (WebElement modal : successModals) {
+                    logger.info("    Модальное окно: {}", modal.getText());
+                }
+            }
+        }
     }
 } 
