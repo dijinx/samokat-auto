@@ -1,8 +1,0 @@
-tests\OrderStatusTest.class
-tests\PageAnalysisTest.class
-tests\LogoTest.class
-pageobject\MainPage.class
-tests\OrderFormAnalysisTest.class
-pageobject\OrderPage.class
-tests\OrderTest.class
-tests\FaqTest.class
