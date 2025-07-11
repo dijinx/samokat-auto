@@ -906,4 +906,148 @@ public class OrderPage {
             }
         }
     }
+
+    public int getDateInputsCount() {
+        return driver.findElements(By.xpath("//input[contains(@placeholder, 'Когда привезти')]")).size();
+    }
+    public boolean isDateInputPresent() {
+        return getDateInputsCount() > 0;
+    }
+    public int getRentalDropdownsCount() {
+        return driver.findElements(By.xpath("//div[contains(@class, 'Dropdown-control')]")).size();
+    }
+    public boolean isRentalDropdownPresent() {
+        return getRentalDropdownsCount() > 0;
+    }
+    public int getColorCheckboxesCount() {
+        return driver.findElements(By.xpath("//input[@type='checkbox']")).size();
+    }
+    public int getCommentInputsCount() {
+        return driver.findElements(By.xpath("//input[@placeholder='Комментарий для курьера']")).size();
+    }
+    public int getOrderButtonsCount() {
+        return driver.findElements(By.xpath("//button[contains(text(), 'Заказать')]")).size();
+    }
+    public void clickDateInput() {
+        driver.findElement(By.xpath("//input[@placeholder='* Когда привезти самокат']")).click();
+    }
+    public int getAvailableDaysCount() {
+        return driver.findElements(By.xpath("//div[contains(@class, 'react-datepicker__day') and not(contains(@class, 'disabled'))]" )).size();
+    }
+    public void clickFirstAvailableDay() {
+        List<WebElement> availableDays = driver.findElements(By.xpath("//div[contains(@class, 'react-datepicker__day') and not(contains(@class, 'disabled'))]"));
+        if (!availableDays.isEmpty()) availableDays.get(0).click();
+    }
+    public int getCalendarDaysCount() {
+        return driver.findElements(By.xpath("//td[contains(@class, 'day') and not(contains(@class, 'disabled'))]" )).size();
+    }
+    public void clickFirstCalendarDay() {
+        List<WebElement> calendarDays = driver.findElements(By.xpath("//td[contains(@class, 'day') and not(contains(@class, 'disabled'))]"));
+        if (!calendarDays.isEmpty()) calendarDays.get(0).click();
+    }
+    public String getDateInputValue() {
+        return driver.findElement(By.xpath("//input[@placeholder='* Когда привезти самокат']")).getAttribute("value");
+    }
+    public int getRentalOptionsCount() {
+        return driver.findElements(By.xpath("//div[contains(@class, 'Dropdown-option')]")).size();
+    }
+    public void clickRentalDropdown() {
+        driver.findElement(By.xpath("//div[contains(@class, 'Dropdown-control')]")).click();
+    }
+    public void clickFirstRentalOption() {
+        List<WebElement> options = driver.findElements(By.xpath("//div[contains(@class, 'Dropdown-option')]"));
+        if (!options.isEmpty()) options.get(0).click();
+    }
+    public void clickFirstColorCheckbox() {
+        List<WebElement> checkboxes = driver.findElements(By.xpath("//input[@type='checkbox']"));
+        if (!checkboxes.isEmpty()) checkboxes.get(0).click();
+    }
+    public void enterComment(String comment) {
+        driver.findElement(By.xpath("//input[@placeholder='Комментарий для курьера']")).sendKeys(comment);
+    }
+    public void clickBody() {
+        driver.findElement(By.tagName("body")).click();
+    }
+    public String getColorCheckboxId(int index) {
+        return driver.findElements(By.xpath("//input[@type='checkbox']")).get(index).getAttribute("id");
+    }
+    public String getColorCheckboxLabel(String id) {
+        return driver.findElement(By.xpath("//label[@for='" + id + "']")).getText();
+    }
+
+    // Получить все input на странице (например, для анализа)
+    public List<WebElement> getAllInputs() {
+        return driver.findElements(By.xpath("//input"));
+    }
+
+    // Получить все кнопки "Далее"
+    public List<WebElement> getNextButtons() {
+        return driver.findElements(By.xpath("//button[contains(text(), 'Далее')]"));
+    }
+
+    // Получить поле метро (input)
+    public WebElement getMetroInput() {
+        List<WebElement> metroInputs = driver.findElements(By.xpath("//input[contains(@placeholder, 'Станция метро')]"));
+        return metroInputs.size() > 0 ? metroInputs.get(0) : null;
+    }
+
+    // Получить опции метро (выпадающий список)
+    public List<WebElement> getMetroOptions() {
+        return driver.findElements(By.xpath("//div[contains(@class, 'Order_Text__2broi')]"));
+    }
+
+    // Получить все элементы календаря (react-datepicker)
+    public List<WebElement> getCalendarElements() {
+        return driver.findElements(By.xpath("//div[contains(@class, 'react-datepicker')]"));
+    }
+
+    // Получить все доступные дни в календаре
+    public List<WebElement> getAvailableDays() {
+        return driver.findElements(By.xpath("//div[contains(@class, 'react-datepicker__day') and not(contains(@class, 'disabled'))]"));
+    }
+
+    // Получить альтернативные дни (если используется другой календарь)
+    public List<WebElement> getCalendarDays() {
+        return driver.findElements(By.xpath("//td[contains(@class, 'day') and not(contains(@class, 'disabled'))]"));
+    }
+
+    // Получить все выпадающие списки аренды
+    public List<WebElement> getRentalDropdowns() {
+        return driver.findElements(By.xpath("//div[contains(@class, 'Dropdown-control')]"));
+    }
+
+    // Получить все чекбоксы цвета
+    public List<WebElement> getColorCheckboxes() {
+        return driver.findElements(By.xpath("//input[@type='checkbox']"));
+    }
+
+    // Получить все поля комментария
+    public List<WebElement> getCommentInputs() {
+        return driver.findElements(By.xpath("//input[@placeholder='Комментарий для курьера']"));
+    }
+
+    // Получить все кнопки "Заказать" на второй странице
+    public List<WebElement> getOrderButtons() {
+        return driver.findElements(By.xpath("//button[contains(text(), 'Заказать')]"));
+    }
+
+    // Получить все кнопки подтверждения "Да" в модальном окне
+    public List<WebElement> getConfirmButtons() {
+        return driver.findElements(By.xpath("//button[contains(text(), 'Да')]"));
+    }
+
+    // Получить все окна успешного заказа
+    public List<WebElement> getSuccessModals() {
+        return driver.findElements(By.xpath("//div[contains(text(), 'Заказ оформлен')]"));
+    }
+
+    // Получить все опции аренды на второй странице формы
+    public List<WebElement> getRentalOptions() {
+        return driver.findElements(By.xpath("//div[contains(@class, 'Dropdown-option')]"));
+    }
+
+    // Получить body (для клика вне календаря)
+    public WebElement getBody() {
+        return driver.findElement(By.tagName("body"));
+    }
 } 

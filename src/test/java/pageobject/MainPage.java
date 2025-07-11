@@ -72,21 +72,30 @@ public class MainPage {
     }
 
     // FAQ
+    public int getFaqQuestionsCount() {
+        return driver.findElements(By.xpath("//div[@role='button' and contains(@class, 'accordion__button')]")).size();
+    }
+    public String getFaqQuestionText(int index) {
+        return driver.findElements(By.xpath("//div[@role='button' and contains(@class, 'accordion__button')]")).get(index).getText();
+    }
+    public String getFaqQuestionClass(int index) {
+        return driver.findElements(By.xpath("//div[@role='button' and contains(@class, 'accordion__button')]")).get(index).getAttribute("class");
+    }
     public void clickFaqQuestion(int index) {
-        closeCookieBanner();
         WebElement question = driver.findElements(By.xpath("//div[@role='button' and contains(@class, 'accordion__button')]")).get(index);
         wait.until(ExpectedConditions.elementToBeClickable(question)).click();
     }
-    
+    public int getFaqAnswersCount() {
+        return driver.findElements(By.xpath("//div[contains(@class, 'accordion__panel')]")).size();
+    }
+    public String getFaqAnswerText(int index) {
+        return driver.findElements(By.xpath("//div[contains(@class, 'accordion__panel')]")).get(index).getText();
+    }
     public boolean isFaqAnswerVisible(int index) {
         WebElement answer = driver.findElements(By.xpath("//div[contains(@class, 'accordion__panel')]")).get(index);
         return answer.isDisplayed() && !answer.getAttribute("class").contains("panelHidden");
     }
     
-    public String getFaqAnswerText(int index) {
-        return driver.findElements(By.xpath("//div[contains(@class, 'accordion__panel')]")).get(index).getText();
-    }
-
     // Логотипы
     public void clickSamokatLogo() {
         closeCookieBanner();
@@ -229,5 +238,90 @@ public class MainPage {
             System.out.println("Ошибка при получении сообщения: " + e.getMessage());
             return "Ошибка: " + e.getMessage();
         }
+    }
+
+    public void enterName(String name) {
+        driver.findElement(By.xpath("//input[@placeholder='* Имя']")).sendKeys(name);
+    }
+    public void enterSurname(String surname) {
+        driver.findElement(By.xpath("//input[@placeholder='* Фамилия']")).sendKeys(surname);
+    }
+    public void enterAddress(String address) {
+        driver.findElement(By.xpath("//input[@placeholder='* Адрес: куда привезти заказ']")).sendKeys(address);
+    }
+    public void selectMetro(String metro) {
+        WebElement metroInput = driver.findElement(By.xpath("//input[@placeholder='* Станция метро']"));
+        metroInput.click();
+        metroInput.sendKeys(metro);
+        driver.findElement(By.xpath("//div[contains(@class,'Order_Text__2broi') and text()='" + metro + "']")).click();
+    }
+    public void enterPhone(String phone) {
+        driver.findElement(By.xpath("//input[@placeholder='* Телефон: на него позвонит курьер']")).sendKeys(phone);
+    }
+
+    public List<String> getHeadersText() {
+        return driver.findElements(By.xpath("//h1")).stream().map(WebElement::getText).toList();
+    }
+    public int getOrderButtonsCount() {
+        return driver.findElements(By.xpath("//button[contains(text(), 'Заказать')]")).size();
+    }
+    public List<String> getOrderButtonsText() {
+        return driver.findElements(By.xpath("//button[contains(text(), 'Заказать')]")).stream().map(WebElement::getText).toList();
+    }
+    public List<String> getOrderButtonsClass() {
+        return driver.findElements(By.xpath("//button[contains(text(), 'Заказать')]")).stream().map(e -> e.getAttribute("class")).toList();
+    }
+    public int getLogosCount() {
+        return driver.findElements(By.xpath("//img[contains(@alt, 'Самокат') or contains(@alt, 'Яндекс')]")).size();
+    }
+    public List<String> getLogosAlt() {
+        return driver.findElements(By.xpath("//img[contains(@alt, 'Самокат') or contains(@alt, 'Яндекс')]")).stream().map(e -> e.getAttribute("alt")).toList();
+    }
+    public List<String> getLogosSrc() {
+        return driver.findElements(By.xpath("//img[contains(@alt, 'Самокат') or contains(@alt, 'Яндекс')]")).stream().map(e -> e.getAttribute("src")).toList();
+    }
+    public int getStatusButtonsCount() {
+        return driver.findElements(By.xpath("//button[contains(text(), 'Статус заказа')]")).size();
+    }
+    public List<String> getStatusButtonsText() {
+        return driver.findElements(By.xpath("//button[contains(text(), 'Статус заказа')]")).stream().map(WebElement::getText).toList();
+    }
+    public List<String> getStatusButtonsClass() {
+        return driver.findElements(By.xpath("//button[contains(text(), 'Статус заказа')]")).stream().map(e -> e.getAttribute("class")).toList();
+    }
+
+    // Получить все кнопки статуса заказа
+    public List<WebElement> getStatusOrderButtons() {
+        return driver.findElements(By.xpath("//button[contains(text(), 'Статус заказа')]"));
+    }
+
+    // Получить все input на странице статуса заказа
+    public List<WebElement> getStatusInputs() {
+        return driver.findElements(By.xpath("//input"));
+    }
+
+    // Получить все кнопки Go! на странице статуса заказа
+    public List<WebElement> getGoButtons() {
+        return driver.findElements(By.xpath("//button[contains(text(), 'Go!')]"));
+    }
+
+    // Получить все элементы результата 'не найдено' (Track_NotFound)
+    public List<WebElement> getTrackNotFoundElements() {
+        return driver.findElements(By.xpath("//div[contains(@class, 'Track_NotFound')]"));
+    }
+
+    // Получить все кнопки 'Заказать' на главной странице
+    public List<WebElement> getOrderButtons() {
+        return driver.findElements(By.xpath("//button[contains(text(), 'Заказать')]"));
+    }
+
+    // Получить все логотипы Самокат
+    public List<WebElement> getSamokatLogos() {
+        return driver.findElements(By.xpath("//img[contains(@alt, 'Самокат')]"));
+    }
+
+    // Получить все логотипы Яндекс
+    public List<WebElement> getYandexLogos() {
+        return driver.findElements(By.xpath("//img[contains(@alt, 'Яндекс')]"));
     }
 } 
